@@ -212,7 +212,7 @@ cd nirkids
 
 ### Open in Android Studio
 1. Launch Android Studio
-2. **File > Open** → Navigate to `/Users/nirworld/ProjectBackups/android/NirKids`
+2. **File > Open** → Navigate to the project root directory (`NirKids`)
 3. Wait for Gradle sync to complete
 4. Connect an Android device or start an emulator (API 26+)
 5. Run with the green ▶️ button
