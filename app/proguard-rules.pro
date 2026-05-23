@@ -1,0 +1,10 @@
+# App-level ProGuard rules for NirKids
+-keep class com.nirkids.** { *; }
+-keep class com.nirkids.app.** { *; }
+-keep class com.nirkids.app.data.** { *; }
+-keep class com.nirkids.app.domain.** { *; }
+-keep class com.nirkids.app.ui.** { *; }
+-keep class com.nirkids.app.ui.main.viewmodel.** { *; }
+-keep class com.nirkids.app.domain.usecase.** { *; }
+-keep class com.nirkids.app.data.model.** { *; }
+-keep class android.speech.tts.** { *; }

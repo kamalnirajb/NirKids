@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "d7b608ad1dd3e0740e9ebd7b7be639c1",
+    "entities": [
+      {
+        "tableName": "alphabet",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`letter` TEXT NOT NULL, `phonetic` TEXT NOT NULL, `exampleWord` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `isVowel` INTEGER NOT NULL, PRIMARY KEY(`letter`))",
+        "fields": [
+          {
+            "fieldPath": "letter",
+            "columnName": "letter",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "phonetic",
+            "columnName": "phonetic",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exampleWord",
+            "columnName": "exampleWord",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isVowel",
+            "columnName": "isVowel",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "letter"
+          ]
+        }
+      },
+      {
+        "tableName": "progress",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`letter` TEXT NOT NULL, `learned` INTEGER NOT NULL, `attempts` INTEGER NOT NULL, `masteryLevel` INTEGER NOT NULL, PRIMARY KEY(`letter`))",
+        "fields": [
+          {
+            "fieldPath": "letter",
+            "columnName": "letter",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "learned",
+            "columnName": "learned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempts",
+            "columnName": "attempts",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masteryLevel",
+            "columnName": "masteryLevel",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "letter"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd7b608ad1dd3e0740e9ebd7b7be639c1')"
+    ]
+  }
+}

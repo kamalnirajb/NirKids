@@ -1,0 +1,43 @@
+# Build artifacts
+bin/
+gen/
+out/
+build/
+.gradle/
+.kotlin/
+kotlin-js-store/
+
+# IDE settings
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Local configuration
+local.properties
+secrets.properties
+
+# Signing files
+*.jks
+*.keystore
+*.p12
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Large files/Dumps
+*.hprof
+java_pid*.hprof
+
+# Android specific
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab

@@ -1,0 +1,8 @@
+parent_gate_state
+parent_gate_question
+parent_gate_answer_attempted
+parent_gate_answer_correct
+parent_gate_answer_wrong
+parent_gate_verified
+parent_gate_locked
+parent_gate_unlocked

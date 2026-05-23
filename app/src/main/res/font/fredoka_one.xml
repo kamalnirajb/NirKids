@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- This is a placeholder for Fredoka One or a similar rounded font suitable for a kids app.
+         In a real project, the actual .ttf files would be placed in res/font/ -->
+    <!--
+    To fix the build error, I've commented out the missing resource reference.
+    Please add 'fredoka_one_regular.ttf' to this folder or update the reference below.
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/fredoka_one_regular" />
+    -->
+</font-family>
