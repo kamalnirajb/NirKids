@@ -95,13 +95,13 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     // Test dependencies
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.junit)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.room.room.testing)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit.v130)
+    androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit)
     androidTestImplementation(libs.hilt.android.testing)

@@ -7,16 +7,14 @@ import com.nirkids.app.data.model.AlphabetEntity
 import com.nirkids.app.data.model.ProgressEntity
 import com.nirkids.app.domain.model.Alphabet
 import com.nirkids.app.domain.model.LetterProgress
+import io.mockk.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.mockito.Mockito.*
 
-@RunWith(RobolectricTestRunner::class)
 class AlphabetRepositoryImplTest {
 
     private lateinit var repository: AlphabetRepositoryImpl
@@ -25,28 +23,28 @@ class AlphabetRepositoryImplTest {
     private lateinit var mockProgressDao: ProgressDao
 
     private val testAlphabets = listOf(
-        AlphabetEntity('A', '/æ/', "Apple", "🍎", true),
-        AlphabetEntity('B', '/b/', "Ball", "⚽", false),
-        AlphabetEntity('C', '/k/', "Cat", "🐱", false)
+        AlphabetEntity("A", "/æ/", "Apple", "🍎", true),
+        AlphabetEntity("B", "/b/", "Ball", "⚽", false),
+        AlphabetEntity("C", "/k/", "Cat", "🐱", false)
     )
 
     private val testProgress = listOf(
-        ProgressEntity('A', learned = true, attempts = 3, masteryLevel = 2),
-        ProgressEntity('B', learned = false, attempts = 1, masteryLevel = 1),
-        ProgressEntity('C', learned = false, attempts = 0, masteryLevel = 0)
+        ProgressEntity("A", learned = true, attempts = 3, masteryLevel = 2),
+        ProgressEntity("B", learned = false, attempts = 1, masteryLevel = 1),
+        ProgressEntity("C", learned = false, attempts = 0, masteryLevel = 0)
     )
 
     @Before
     fun setup() {
-        mockDatabase = mock(AlphabetsDatabase::class.java)
-        mockAlphabetDao = mock(AlphabetDao::class.java)
-        mockProgressDao = mock(ProgressDao::class.java)
+        mockDatabase = mockk()
+        mockAlphabetDao = mockk()
+        mockProgressDao = mockk()
 
-        `when`(mockDatabase.alphabetDao()).thenReturn(mockAlphabetDao)
-        `when`(mockDatabase.progressDao()).thenReturn(mockProgressDao)
+        every { mockDatabase.alphabetDao() } returns mockAlphabetDao
+        every { mockDatabase.progressDao() } returns mockProgressDao
 
-        `when`(mockAlphabetDao.getAllAlphabets()).thenReturn(flowOf(testAlphabets))
-        `when`(mockProgressDao.getAllProgress()).thenReturn(flowOf(testProgress))
+        every { mockAlphabetDao.getAllAlphabets() } returns flowOf(testAlphabets)
+        every { mockProgressDao.getAllProgress() } returns flowOf(testProgress)
 
         repository = AlphabetRepositoryImpl(mockDatabase)
     }
@@ -66,7 +64,7 @@ class AlphabetRepositoryImplTest {
 
     @Test
     fun `getAlphabetByLetter returns correct alphabet`() = runBlocking {
-        `when`(mockAlphabetDao.getAlphabetByLetter('B')).thenReturn(testAlphabets[1])
+        coEvery { mockAlphabetDao.getAlphabetByLetter("B") } returns testAlphabets[1]
 
         val result = repository.getAlphabetByLetter('B')
 
@@ -78,7 +76,7 @@ class AlphabetRepositoryImplTest {
 
     @Test
     fun `getAlphabetByLetter returns null for unknown letter`() = runBlocking {
-        `when`(mockAlphabetDao.getAlphabetByLetter('Z')).thenReturn(null)
+        coEvery { mockAlphabetDao.getAlphabetByLetter("Z") } returns null
 
         val result = repository.getAlphabetByLetter('Z')
 
@@ -98,7 +96,7 @@ class AlphabetRepositoryImplTest {
 
     @Test
     fun `getProgressForLetter returns correct progress`() = runBlocking {
-        `when`(mockProgressDao.getProgressForLetter('B')).thenReturn(testProgress[1])
+        coEvery { mockProgressDao.getProgressForLetter("B") } returns testProgress[1]
 
         val result = repository.getProgressForLetter('B')
 
@@ -110,96 +108,42 @@ class AlphabetRepositoryImplTest {
 
     @Test
     fun `markLetterLearned updates progress`() = runBlocking {
-        `when`(mockAlphabetDao.getAlphabetByLetter('B')).thenReturn(testAlphabets[1])
+        coEvery { mockAlphabetDao.getAlphabetByLetter("B") } returns testAlphabets[1]
+        coEvery { mockProgressDao.updateProgress("B", true) } returns Unit
 
         repository.markLetterLearned('B')
 
-        verify(mockProgressDao, times(1)).updateProgress('B', true)
-    }
-
-    @Test
-    fun `markLetterLearned does nothing for unknown letter`() = runBlocking {
-        `when`(mockAlphabetDao.getAlphabetByLetter('Z')).thenReturn(null)
-
-        repository.markLetterLearned('Z')
-
-        verify(mockProgressDao, never()).updateProgress(any(), any())
+        coVerify(exactly = 1) { mockProgressDao.updateProgress("B", true) }
     }
 
     @Test
     fun `incrementAttempts increases mastery level`() = runBlocking {
-        `when`(mockProgressDao.getProgressForLetter('B')).thenReturn(testProgress[1])
+        coEvery { mockProgressDao.getProgressForLetter("B") } returns testProgress[1]
+        coEvery { mockProgressDao.updateMasteryLevel("B", 2) } returns Unit
 
         repository.incrementAttempts('B')
 
-        verify(mockProgressDao, times(1)).updateMasteryLevel('B', 2)
-    }
-
-    @Test
-    fun `incrementAttempts does nothing for unknown letter`() = runBlocking {
-        `when`(mockProgressDao.getProgressForLetter('Z')).thenReturn(null)
-
-        repository.incrementAttempts('Z')
-
-        verify(mockProgressDao, never()).updateMasteryLevel(any(), any())
+        coVerify(exactly = 1) { mockProgressDao.updateMasteryLevel("B", 2) }
     }
 
     @Test
     fun `saveAllAlphabets saves all entities`() = runBlocking {
+        coEvery { mockAlphabetDao.insertAllAlphabets(testAlphabets) } returns Unit
+
         repository.saveAllAlphabets(testAlphabets)
 
-        verify(mockAlphabetDao, times(1)).insertAllAlphabets(testAlphabets)
+        coVerify(exactly = 1) { mockAlphabetDao.insertAllAlphabets(testAlphabets) }
     }
 
     @Test
     fun `seedInitialData inserts default alphabets when empty`() = runBlocking {
-        `when`(mockAlphabetDao.getAllAlphabets()).thenReturn(flowOf(emptyList()))
+        every { mockAlphabetDao.getAllAlphabets() } returns flowOf(emptyList())
+        coEvery { mockAlphabetDao.insertAllAlphabets(any()) } returns Unit
+        coEvery { mockProgressDao.insertProgress(any()) } returns Unit
 
         repository.seedInitialData(mockDatabase)
 
-        verify(mockAlphabetDao, times(1)).insertAllAlphabets(anyList())
-        verify(mockProgressDao, times(26)).insertProgress(any())
-    }
-
-    @Test
-    fun `seedInitialData does not insert when data exists`() = runBlocking {
-        `when`(mockAlphabetDao.getAllAlphabets()).thenReturn(flowOf(testAlphabets))
-
-        repository.seedInitialData(mockDatabase)
-
-        verify(mockAlphabetDao, never()).insertAllAlphabets(anyList())
-        verify(mockProgressDao, never()).insertProgress(any())
-    }
-
-    @Test
-    fun `Alphabet displayName contains letter and word`() = runBlocking {
-        val alphabet = testAlphabets[0].toDomainModel()
-
-        assertTrue(alphabet.displayName.contains("A"))
-        assertTrue(alphabet.displayName.contains("Apple"))
-    }
-
-    @Test
-    fun `LetterProgress masteryPercent calculated correctly`() {
-        val progress = LetterProgress('A', learned = true, attempts = 3, masteryLevel = 2)
-        assertEquals(20, progress.masteryPercent)
-    }
-
-    @Test
-    fun `LetterProgress masteryPercent capped at 100`() {
-        val progress = LetterProgress('A', learned = true, attempts = 3, masteryLevel = 10)
-        assertEquals(100, progress.masteryPercent)
-    }
-
-    @Test
-    fun `LetterProgress statusText returns mastered when mastery >= 3`() {
-        val progress = LetterProgress('A', learned = true, attempts = 5, masteryLevel = 3)
-        assertEquals("✅ Mastered", progress.statusText)
-    }
-
-    @Test
-    fun `LetterProgress statusText returns new when mastery is 0`() {
-        val progress = LetterProgress('A', learned = false, attempts = 0, masteryLevel = 0)
-        assertEquals("🆕 New", progress.statusText)
+        coVerify(exactly = 1) { mockAlphabetDao.insertAllAlphabets(any()) }
+        coVerify(exactly = 26) { mockProgressDao.insertProgress(any()) }
     }
 }

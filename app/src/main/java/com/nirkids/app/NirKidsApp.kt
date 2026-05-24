@@ -9,7 +9,6 @@ class NirKidsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Initialize TraceValidator
         AppTraceValidator.initialize(this)
     }
 }
