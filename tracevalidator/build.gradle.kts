@@ -4,7 +4,8 @@ plugins {
 
 android {
     namespace = "com.nirkids.tracevalidator"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildTools.get().toString()
 
     defaultConfig {
         minSdk = 26

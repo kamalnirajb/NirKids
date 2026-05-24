@@ -8,12 +8,13 @@ plugins {
 
 android {
     namespace = "com.nirkids"
-    compileSdk = 37
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildTools.get().toString()
 
     defaultConfig {
         applicationId = "com.nirkids"
         minSdk = 29
-        targetSdk = 37
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1000
         versionName = "1.0.0"
 
