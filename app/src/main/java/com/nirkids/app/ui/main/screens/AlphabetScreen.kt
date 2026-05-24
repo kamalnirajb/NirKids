@@ -34,9 +34,40 @@ fun AlphabetScreen(
     vibrationHelper: com.nirkids.app.ui.utils.VibrationHelper
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    AlphabetScreenContent(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onPlayPronunciation = { letter ->
+            ttsHelper.speak(letter.toString())
+            viewModel.playPronunciation()
+            TraceValidator.logEvent("letter_pronounced", mapOf("letter" to letter.toString()))
+        },
+        onMarkLearned = { letter ->
+            scope.launch {
+                viewModel.markAsLearned(letter)
+            }
+        },
+        onLetterTapped = { letter ->
+            vibrationHelper.vibrate(30)
+            ttsHelper.speak(letter.toString())
+            TraceValidator.logEvent("letter_tapped", mapOf("letter" to letter.toString()))
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlphabetScreenContent(
+    uiState: com.nirkids.app.ui.main.viewmodel.AlphabetUiState,
+    onNavigateBack: () -> Unit,
+    onPlayPronunciation: (Char) -> Unit,
+    onMarkLearned: (Char) -> Unit,
+    onLetterTapped: (Char) -> Unit
+) {
     var showLetterDetails by remember { mutableStateOf(false) }
     var selectedLetter by remember { mutableStateOf<Alphabet?>(null) }
-    val scope = rememberCoroutineScope()
 
     // Color mapping for letters
     val letterColors = listOf(LetterRed, LetterOrange, LetterYellow, LetterGreen, LetterCyan, LetterBlue, LetterPurple)
@@ -83,14 +114,10 @@ fun AlphabetScreen(
                         progress = uiState.currentProgress,
                         isVowel = currentLetter.isVowel,
                         onPlay = {
-                            ttsHelper.speak(currentLetter.letter.toString())
-                            viewModel.playPronunciation()
-                            TraceValidator.logEvent("letter_pronounced", mapOf("letter" to currentLetter.letter.toString()))
+                            onPlayPronunciation(currentLetter.letter)
                         },
                         onMarkLearned = { 
-                            scope.launch {
-                                viewModel.markAsLearned(currentLetter.letter)
-                            }
+                            onMarkLearned(currentLetter.letter)
                         },
                         onDismiss = { 
                             showLetterDetails = false
@@ -123,9 +150,7 @@ fun AlphabetScreen(
                                     onClick = {
                                         selectedLetter = alphabet
                                         showLetterDetails = true
-                                        vibrationHelper.vibrate(30)
-                                        ttsHelper.speak(alphabet.letter.toString())
-                                        TraceValidator.logEvent("letter_tapped", mapOf("letter" to alphabet.letter.toString()))
+                                        onLetterTapped(alphabet.letter)
                                     },
                                     isVowel = alphabet.isVowel
                                 )

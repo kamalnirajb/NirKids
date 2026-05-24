@@ -1,81 +1,71 @@
 # UI and Integration Testing
 
-This document covers testing that requires an Android environment (emulator or device).
+This document covers testing that requires an Android environment, focusing on the real-world examples in `HomeScreenTest`, `AlphabetScreenTest`, `ParentGateScreenTest`, and `PronunciationScreenTest`.
 
-## Jetpack Compose UI Testing
-Compose uses a specific testing library to find elements and perform actions.
+## Stateless Composable Pattern
+We test the `*Content` composables. This allows us to pass a pre-defined `UiState` and verify the UI reacts correctly.
 
-### Example: Verifying a Button
+### Example: Testing List Rendering and Interaction
+From `AlphabetScreenTest.kt`:
 ```kotlin
-class MyComposeTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+@Test
+fun alphabetScreen_displaysLetters() {
+    val mockLetters = listOf(Alphabet('A', "/æ/", "Apple", "🍎", true))
+    val mockState = AlphabetUiState(allLetters = mockLetters)
 
-    @Test
-    fun myTest() {
-        // Start the app with a specific Composable
-        composeTestRule.setContent {
-            MyScreen()
-        }
-
-        // Find a node by text and click it
-        composeTestRule.onNodeWithText("Submit").performClick()
-
-        // Verify something happened
-        composeTestRule.onNodeWithText("Success").assertIsDisplayed()
+    composeTestRule.setContent {
+        AlphabetScreenContent(
+            uiState = mockState,
+            onNavigateBack = {},
+            // ... other lambdas
+        )
     }
+
+    // Verify 'A' is shown
+    composeTestRule.onNodeWithText("A").assertIsDisplayed()
 }
 ```
 
-## Testing with Hilt
-When using Hilt for Dependency Injection, your instrumented tests need a special setup to inject dependencies or provide test doubles (fakes/mocks).
-
-### Hilt Test Setup
-1. Use the `@HiltAndroidTest` annotation.
-2. Add the `HiltAndroidRule`.
-
+### Example: Testing Navigation and Callbacks
+From `HomeScreenTest.kt`:
 ```kotlin
-@HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
-class MyHiltTest {
-
-    @get:Rule(order = 0)
-    var hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    @Before
-    fun init() {
-        hiltRule.inject()
+@Test
+fun homeScreen_navigatesToAlphabet() {
+    var navigated = false
+    composeTestRule.setContent {
+        HomeScreenContent(
+            uiState = HomeUiState(),
+            onNavigateToAlphabet = { navigated = true },
+            onNavigateToPronunciation = {},
+            onNavigateToParentGate = {}
+        )
     }
 
-    @Test
-    fun testWithDI() {
-        // Your test here...
-    }
+    composeTestRule.onNodeWithText("🔤 Learn Alphabets").performClick()
+    assert(navigated)
 }
 ```
 
-## Room Database Testing
-Instrumented tests are ideal for testing Room migrations or complex queries using an in-memory database.
-
+### Example: Testing Conditional Visibility
+From `ParentGateScreenTest.kt`:
 ```kotlin
-@RunWith(AndroidJUnit4::class)
-class DatabaseTest {
-    private lateinit var db: NirKidsDatabase
-    private lateinit var dao: ProgressDao
+@Test
+fun parentGate_displaysSuccess() {
+    val mockState = ParentGateUiState(isSuccess = true)
 
-    @Before
-    fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, NirKidsDatabase::class.java).build()
-        dao = db.progressDao()
+    composeTestRule.setContent {
+        ParentGateScreenContent(
+            uiState = mockState,
+            // ... callbacks
+        )
     }
 
-    @After
-    fun closeDb() {
-        db.close()
-    }
+    // Nodes that only appear on success
+    composeTestRule.onNodeWithText("Verified!").assertIsDisplayed()
 }
 ```
+
+## Important constraints for `androidTest`
+1.  **Method Names**: Avoid spaces in backticks. Use underscores (e.g., `fun test_my_feature()`).
+2.  **MockK**: In `androidTest`, use `mockk<T>()` with caution. It's often better to use real state objects (like `HomeUiState`) rather than mocking the State class itself, as the state objects are simple data classes.
+3.  **Synchronization**: The `createComposeRule()` (v2) uses `StandardTestDispatcher`. If your tests rely on immediate execution, use `composeTestRule.waitForIdle()` or `runOnIdle { }`.

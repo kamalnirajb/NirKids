@@ -10,21 +10,21 @@ class AccessibilityHelperTest {
 
     @Test
     fun `getLetterBackgroundColor returns VowelColor for vowels`() {
-        val alphabet = Alphabet('A', '/æ/', "Apple", "🍎", true)
+        val alphabet = Alphabet('A', "/æ/", "Apple", "🍎", true)
         val color = AccessibilityHelper.getLetterBackgroundColor(alphabet.isVowel)
         assertEquals(VowelColor, color)
     }
 
     @Test
     fun `getLetterBackgroundColor returns ConsonantColor for consonants`() {
-        val alphabet = Alphabet('B', '/b/', "Ball", "⚽", false)
+        val alphabet = Alphabet('B', "/b/", "Ball", "⚽", false)
         val color = AccessibilityHelper.getLetterBackgroundColor(alphabet.isVowel)
         assertEquals(ConsonantColor, color)
     }
 
     @Test
     fun `getPhoneticVisualAid returns all fields`() {
-        val alphabet = Alphabet('A', '/æ/', "Apple", "🍎", true)
+        val alphabet = Alphabet('A', "/æ/", "Apple", "🍎", true)
         val aid = AccessibilityHelper.getPhoneticVisualAid(alphabet)
 
         assertTrue(aid.contains("Letter: A"))
@@ -52,10 +52,10 @@ class AccessibilityHelperTest {
 
     @Test
     fun `getLetterCategory returns correct category`() {
-        val vowel = Alphabet('A', '/æ/', "Apple", "🍎", true)
+        val vowel = Alphabet('A', "/æ/", "Apple", "🍎", true)
         assertEquals("Vowel (a, e, i, o, u)", AccessibilityHelper.getLetterCategory(vowel))
 
-        val consonant = Alphabet('B', '/b/', "Ball", "⚽", false)
+        val consonant = Alphabet('B', "/b/", "Ball", "⚽", false)
         assertEquals("Consonant", AccessibilityHelper.getLetterCategory(consonant))
     }
 }

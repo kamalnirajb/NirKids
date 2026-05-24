@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ParentGateUiState(
-    val gateState: ParentGateState = ParentGateValidateUseCase().generateQuestion(),
+    val gateState: ParentGateState = ParentGateState(),
     val userInput: String = "",
     val errorMessage: String? = null,
     val isSuccess: Boolean = false,
@@ -24,7 +24,7 @@ class ParentGateViewModel @Inject constructor(
     private val parentGateUseCase: ParentGateValidateUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ParentGateUiState())
+    private val _uiState = MutableStateFlow(ParentGateUiState(gateState = parentGateUseCase.generateQuestion()))
     val uiState: StateFlow<ParentGateUiState> = _uiState
 
     val gateState: ParentGateState get() = _uiState.value.gateState

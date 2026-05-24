@@ -30,6 +30,35 @@ fun PronunciationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    PronunciationScreenContent(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onTogglePracticeMode = { viewModel.togglePracticeMode() },
+        onLoadNextLetter = { viewModel.loadNextLetter() },
+        onCheckPronunciation = { viewModel.checkPronunciation(it) },
+        onClearFeedback = { viewModel.clearFeedback() },
+        onSpeakLetter = { letter, example ->
+            ttsHelper.speak("$letter. $letter is for $example.")
+            TraceValidator.logEvent("pronunciation_speak", mapOf("letter" to letter.toString()))
+        },
+        onSpeakText = { text ->
+            ttsHelper.speak(text)
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PronunciationScreenContent(
+    uiState: com.nirkids.app.ui.main.viewmodel.PronunciationUiState,
+    onNavigateBack: () -> Unit,
+    onTogglePracticeMode: () -> Unit,
+    onLoadNextLetter: () -> Unit,
+    onCheckPronunciation: (String) -> Unit,
+    onClearFeedback: () -> Unit,
+    onSpeakLetter: (Char, String) -> Unit,
+    onSpeakText: (String) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -40,7 +69,7 @@ fun PronunciationScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.togglePracticeMode() }) {
+                    IconButton(onClick = onTogglePracticeMode) {
                         Icon(
                             if (uiState.isPracticeMode) Icons.Default.Done else Icons.Default.Edit,
                             contentDescription = "Toggle Practice"
@@ -68,7 +97,7 @@ fun PronunciationScreen(
                 ) {
                     Text("No letters to practice! 😢", fontSize = 20.sp)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { viewModel.loadNextLetter() }) {
+                    Button(onClick = onLoadNextLetter) {
                         Text("Try Again")
                     }
                 }
@@ -124,8 +153,7 @@ fun PronunciationScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    ttsHelper.speak("${letter.letter}. ${letter.letter} is for ${letter.exampleWord}.")
-                                    TraceValidator.logEvent("pronunciation_speak", mapOf("letter" to letter.letter.toString()))
+                                    onSpeakLetter(letter.letter, letter.exampleWord)
                                 },
                                 shape = RoundedCornerShape(16.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = if (letter.isVowel) VowelColor else ConsonantColor)
@@ -172,7 +200,7 @@ fun PronunciationScreen(
                             )
                             BasicTextField(
                                 value = uiState.userInput,
-                                onValueChange = { viewModel.checkPronunciation(it) },
+                                onValueChange = { onCheckPronunciation(it) },
                                 textStyle = TextStyle(
                                     fontSize = 48.sp,
                                     fontWeight = FontWeight.Bold,
@@ -230,9 +258,9 @@ fun PronunciationScreen(
                     // Next letter button
                     Button(
                         onClick = {
-                            viewModel.loadNextLetter()
-                            viewModel.clearFeedback()
-                            ttsHelper.speak("Next letter!")
+                            onLoadNextLetter()
+                            onClearFeedback()
+                            onSpeakText("Next letter!")
                         },
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)

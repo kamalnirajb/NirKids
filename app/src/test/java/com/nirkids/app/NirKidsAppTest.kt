@@ -1,8 +1,7 @@
 package com.nirkids.app
 
 import android.content.Context
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
+import android.os.Build
 import org.robolectric.RuntimeEnvironment
 import org.junit.Assert.*
 import org.junit.Test
@@ -11,7 +10,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [Build.VERSION_CODES.O])
+@Config(sdk = [Build.VERSION_CODES.O], application = NirKidsApp::class)
 class NirKidsAppTest {
 
     @Test

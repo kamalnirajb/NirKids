@@ -8,14 +8,14 @@ class AlphabetEntityTest {
     @Test
     fun `AlphabetEntity stores all fields correctly`() {
         val entity = AlphabetEntity(
-            letter = 'A',
+            letter = "A",
             phonetic = "/æ/",
             exampleWord = "Apple",
             imageUrl = "🍎",
             isVowel = true
         )
 
-        assertEquals('A', entity.letter)
+        assertEquals("A", entity.letter)
         assertEquals("/æ/", entity.phonetic)
         assertEquals("Apple", entity.exampleWord)
         assertEquals("🍎", entity.imageUrl)
@@ -27,16 +27,16 @@ class ProgressEntityTest {
 
     @Test
     fun `ProgressEntity defaults are correct`() {
-        val entity = ProgressEntity('A')
+        val entity = ProgressEntity("A")
 
-        assertTrue(entity.learned)
+        assertFalse(entity.learned)
         assertEquals(0, entity.attempts)
         assertEquals(0, entity.masteryLevel)
     }
 
     @Test
     fun `ProgressEntity stores custom values`() {
-        val entity = ProgressEntity('B', learned = false, attempts = 5, masteryLevel = 3)
+        val entity = ProgressEntity("B", learned = false, attempts = 5, masteryLevel = 3)
 
         assertFalse(entity.learned)
         assertEquals(5, entity.attempts)

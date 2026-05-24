@@ -41,8 +41,8 @@ class ThemeColorsTest {
 
     @Test
     fun `Color values are valid ARGB`() {
-        assertTrue(LetterRed.value.toLong() ushr 32 == 0xFF.toLong()) // Alpha
-        assertTrue(LetterGreen.value.toLong() ushr 32 == 0xFF.toLong())
-        assertTrue(LetterPurple.value.toLong() ushr 32 == 0xFF.toLong())
+        assertEquals(1.0f, LetterRed.alpha)
+        assertEquals(1.0f, LetterGreen.alpha)
+        assertEquals(1.0f, LetterPurple.alpha)
     }
 }

@@ -16,7 +16,7 @@ class AlphabetScreenScreenTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun `alphabet grid renders letters A through Z`() {
+    fun alphabet_grid_renders_letters_A_through_Z() {
         composeTestRule.setContent {
             AlphabetGridPreview()
         }

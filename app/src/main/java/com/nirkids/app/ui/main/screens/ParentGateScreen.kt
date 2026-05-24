@@ -32,6 +32,31 @@ fun ParentGateScreen(
     viewModel: ParentGateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    ParentGateScreenContent(
+        uiState = uiState,
+        onDismiss = onDismiss,
+        onGateSuccess = onGateSuccess,
+        onUserInputChanged = { viewModel.onUserInputChanged(it) },
+        onSubmitAnswer = { viewModel.submitAnswer(it) },
+        onVerifyPin = { viewModel.verifyPin(it) },
+        onSetParentPin = { viewModel.setParentPin(it) },
+        onClearLock = { viewModel.clearLock() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ParentGateScreenContent(
+    uiState: com.nirkids.app.ui.main.viewmodel.ParentGateUiState,
+    onDismiss: () -> Unit,
+    onGateSuccess: () -> Unit,
+    onUserInputChanged: (String) -> Unit,
+    onSubmitAnswer: (String) -> Unit,
+    onVerifyPin: (String) -> Unit,
+    onSetParentPin: (String) -> Unit,
+    onClearLock: () -> Unit
+) {
     var showPinEntry by remember { mutableStateOf(false) }
     var pinInput by remember { mutableStateOf("") }
 
@@ -94,7 +119,7 @@ fun ParentGateScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Button(
                                     onClick = {
-                                        viewModel.setParentPin(newPinInput)
+                                        onSetParentPin(newPinInput)
                                         showChangePin = false
                                         newPinInput = ""
                                     },
@@ -143,7 +168,7 @@ fun ParentGateScreen(
                         Text("Try again in 60 seconds.", fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
-                            onClick = { viewModel.clearLock() },
+                            onClick = onClearLock,
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text("Unlock")
@@ -176,7 +201,7 @@ fun ParentGateScreen(
                         Spacer(modifier = Modifier.height(20.dp))
                         BasicTextField(
                             value = uiState.userInput,
-                            onValueChange = { viewModel.onUserInputChanged(it) },
+                            onValueChange = { onUserInputChanged(it) },
                             textStyle = TextStyle(
                                 fontSize = 36.sp,
                                 fontWeight = FontWeight.Bold,
@@ -201,7 +226,7 @@ fun ParentGateScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                viewModel.submitAnswer(uiState.userInput)
+                                onSubmitAnswer(uiState.userInput)
                                 if (uiState.isSuccess) {
                                     TraceValidator.logEvent("parent_gate_verified", emptyMap())
                                 }
@@ -317,7 +342,7 @@ fun ParentGateScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                viewModel.verifyPin(pinInput)
+                                onVerifyPin(pinInput)
                             },
                             enabled = pinInput.length == 4,
                             shape = RoundedCornerShape(16.dp)

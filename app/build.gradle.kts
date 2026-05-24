@@ -101,9 +101,12 @@ dependencies {
     testImplementation(libs.mockk.agent)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.room.room.testing)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit.v130)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit)
     androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.mockk.android)
 }

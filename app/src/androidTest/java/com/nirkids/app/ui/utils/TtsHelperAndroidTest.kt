@@ -22,30 +22,30 @@ class TtsHelperAndroidTest {
     }
 
     @Test
-    fun `TtsHelper initializes without crash`() {
+    fun TtsHelper_initializes_without_crash() {
         assertTrue(ttsHelper::class.java.simpleName == "TtsHelper")
     }
 
     @Test
-    fun `speak does not crash on init`() {
+    fun speak_does_not_crash_on_init() {
         // May not speak if TTS engine is not available
         ttsHelper.speak("test")
         // Just ensure it doesn't crash
     }
 
     @Test
-    fun `stop is callable`() {
+    fun stop_is_callable() {
         ttsHelper.stop()
         // Ensure no crash
     }
 
     @Test
-    fun `setPitch does not crash`() {
+    fun setPitch_does_not_crash() {
         ttsHelper.setPitch(1.5f)
     }
 
     @Test
-    fun `setSpeechRate does not crash`() {
+    fun setSpeechRate_does_not_crash() {
         ttsHelper.setSpeechRate(0.5f)
     }
 }

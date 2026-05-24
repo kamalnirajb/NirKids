@@ -34,6 +34,22 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    HomeScreenContent(
+        uiState = uiState,
+        onNavigateToAlphabet = onNavigateToAlphabet,
+        onNavigateToPronunciation = onNavigateToPronunciation,
+        onNavigateToParentGate = onNavigateToParentGate
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenContent(
+    uiState: com.nirkids.app.ui.main.viewmodel.HomeUiState,
+    onNavigateToAlphabet: () -> Unit,
+    onNavigateToPronunciation: () -> Unit,
+    onNavigateToParentGate: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
